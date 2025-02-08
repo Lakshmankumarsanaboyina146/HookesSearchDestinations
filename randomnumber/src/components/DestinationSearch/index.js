@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 
 import DestinationItem from "../DestinationItem";
 
@@ -7,21 +7,26 @@ import "./index.css";
 const DestinationSearch = (props) => {
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  
   const { destinationsList } = props;
 
-  const getSearchResults = () => {
-    const searchedResults = destinationsList.filter((eachDestination) =>
-      eachDestination.name.toLowerCase().includes(searchInput.toLowerCase())
-    );
-    setSearchResults(searchedResults);
-  };
+  useEffect(() => {
+    if (searchInput === "") {
+      setSearchResults(destinationsList);
+    } else {
+      const searchedResults = destinationsList.filter((eachDestination) =>
+        eachDestination.name.toLowerCase().includes(searchInput.toLowerCase())
+      );
+      console.log(searchedResults);
+      setSearchResults(searchedResults);
+    }
+  }, [destinationsList, searchInput]);
+
+
 
   const onChangeSearchInput = (event) => {
     setSearchInput(event.target.value);
-    getSearchResults();
   };
-
-  console.log("rendering");
 
   return (
     <div className="app-container">
@@ -42,19 +47,12 @@ const DestinationSearch = (props) => {
           />
         </div>
         <ul className="destinations-list">
-          {searchInput === ""
-            ? destinationsList.map((eachDestination) => (
-                <DestinationItem
-                  key={eachDestination.id}
-                  destinationDetails={eachDestination}
-                />
-              ))
-            : searchResults.map((eachDestination) => (
-                <DestinationItem
-                  key={eachDestination.id}
-                  destinationDetails={eachDestination}
-                />
-              ))}
+          {searchResults.map((eachDestination) => (
+            <DestinationItem
+              key={eachDestination.id}
+              destinationDetails={eachDestination}
+            />
+          ))}
         </ul>
       </div>
     </div>
